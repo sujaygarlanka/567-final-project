@@ -1,8 +1,7 @@
 import random
 import numpy as np
-import cupy as cp
+# import cupy as cp
 from lib.computational_graph_approach.value import Value
-
 
 class Network:
     def parameters(self):

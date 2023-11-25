@@ -1,6 +1,6 @@
 import sys
-sys.path.append('../')
-from lib.value import Value
+sys.path.append('../../')
+from lib.computational_graph_approach.value import Value
 import torch
 
 def test_add():
