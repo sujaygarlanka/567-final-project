@@ -10,7 +10,7 @@ import random
 
 def play():
     env = gymnasium.make(
-        "FlappyBird-v0", audio_on=True, render_mode="human"
+        "FlappyBird-v0", audio_on=False, render_mode="human"
     )
 
     steps = 0
@@ -32,6 +32,7 @@ def play():
 
         # Processing:
         obs, _, done, _, info = env.step(action)
+        # from IPython import embed; embed()
 
         steps += 1
         print(

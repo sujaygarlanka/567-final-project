@@ -300,10 +300,11 @@ class MSE():
     def __call__(self, inputs, targets):
         self.inputs = inputs
         self.targets = targets
-        return np.mean(np.square(inputs - targets), axis=1)
+        return np.mean(np.square(inputs - targets).flatten())
     
     def backward(self, prev_grad):
-        return 2 * prev_grad * (self.inputs - self.targets) / self.inputs.shape[1]
+        grads = 2 * prev_grad * (self.inputs - self.targets) / len(self.inputs.flatten())
+        return grads
     
 class SVM():
         
