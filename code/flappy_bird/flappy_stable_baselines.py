@@ -1,16 +1,16 @@
 import flappy_bird_gymnasium
 import gymnasium as gym
 from stable_baselines3.common.callbacks import EvalCallback
-from wandb.integration.sb3 import WandbCallback
-import wandb
+# from wandb.integration.sb3 import WandbCallback
+# import wandb
 
 # model.learn(..., callback=WandbCallback())
 
 from stable_baselines3 import DQN, PPO
 
 
-# eval_env = gym.make("FlappyBird-v0", render_mode="rgb_array")
-eval_env = gym.make("CartPole-v1", render_mode="rgb_array")
+eval_env = gym.make("FlappyBird-v0", render_mode="rgb_array")
+# eval_env = gym.make("CartPole-v1", render_mode="rgb_array")
 
 
 # config = {
@@ -32,13 +32,14 @@ eval_callback = EvalCallback(
     deterministic=True,
     render=False,
 )
-env = gym.make("CartPole-v1", render_mode="rgb_array")
+# env = gym.make("CartPole-v1", render_mode="rgb_array")
+env = gym.make("FlappyBird-v0", render_mode="rgb_array")
 model = DQN("MlpPolicy", env, verbose=1)
 # model.learn(
 #     total_timesteps=100000, callback=WandbCallback(verbose=1, log="all"), log_interval=4
 # )
 model.learn(
-    total_timesteps=100000, callback=eval_callback, log_interval=4
+    total_timesteps=1000000, callback=eval_callback, log_interval=4
 )
 # model.save("dqn_cartpole")
 
