@@ -42,6 +42,14 @@ class Network:
         grads += alpha * 2 * params
         self.set_gradients(grads)
         return np.sum(alpha * params * params)
+    
+    def save(self, path):
+        params, _ = self.parameters()
+        np.save(path, params)
+    
+    def load(self, path):
+        params = np.load(path)
+        self.set_parameters(params)
 
 class FC():
 

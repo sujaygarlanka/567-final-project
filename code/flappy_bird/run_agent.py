@@ -24,7 +24,7 @@ class NN(Network):
         return self.forward(input)
 
 model = NN()
-model.load("flappy_bird_model.npy")
+model.load("models/flappy_bird.npy")
 
 state = env.reset()
 num = 0

@@ -120,8 +120,8 @@ def test_max_pooling():
     
     assert np.array_equal(outputs, np.array([[[[2, 4], [2, 4]], [[4, 2], [4, 2]]]]))
 
-# test_FC()
-# test_FC_net()
-# test_convolution()
+test_FC()
+test_FC_net()
+test_convolution()
 test_max_pooling()
     
