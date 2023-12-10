@@ -27,18 +27,18 @@ def play():
         #     ):
         #         action = 1
 
-        action = random.choices([0, 1], weights=[90, 10])[0]
-        print(action)
+        action = random.choices([0, 1], weights=[10, 10])[0]
+        # print(action)
 
         # Processing:
         obs, _, done, _, info = env.step(action)
         # from IPython import embed; embed()
 
         steps += 1
-        print(
-            f"Action: {action}\n"
-            f"Score: {info['score']}\n Steps: {steps}\n"
-        )
+        # print(
+        #     f"Action: {action}\n"
+        #     f"Score: {info['score']}\n Steps: {steps}\n"
+        # )
 
         if done:
             break
