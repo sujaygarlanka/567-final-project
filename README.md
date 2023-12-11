@@ -5,7 +5,11 @@
     - cartpole: code related to training and running agent for the Cartpole V1 environment
     - flappy_bird: code related to train and running agent for the Flappy Bird environment
     - lib: neural network libraries
+        - computational_graph_approach
+        - matrix_approach (layered implementation)
     - tests: testing neural network libraries
+        - computational_graph
+        - matrix (layered approach tests)
 
 ## Implement Deep Q Network From Scratch To Train An Agent
 
@@ -34,6 +38,4 @@ wheel==0.38.4
 ```
 
 These requirements are necessary to install the following flappy bird [environment](https://github.com/Talendar/flappy-bird-gym). Tried making it compatible with the more modern flappy bird gymnasium [environment](https://github.com/markub3327/flappy-bird-gymnasium/tree/main), but this seems to have issues with its state information.
-
-### Flappy Bird (RGB)
 
