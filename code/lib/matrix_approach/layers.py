@@ -1,6 +1,7 @@
 from typing import Any
 import numpy as np
 import random
+from lib.computational_graph_approach.utils import Timer
 
 class Network:
 
@@ -31,9 +32,12 @@ class Network:
         return inputs
 
     def backward(self, loss_fn):
+        # timer = Timer()
         prev_grad = loss_fn.backward(1.0)
         for layer in reversed(self.layers):
+            # timer.start()
             prev_grad = layer.backward(prev_grad)
+            # timer.stop(str(layer))
         return prev_grad
     
     def l2_regularization(self):
@@ -97,15 +101,17 @@ class FC():
     
 class Conv2D():
     def __init__(self, input_channels, kernel_size, number_filters, 
-                stride=1, padding=0):
+                stride=1, padding=0, compute_grads_inputs=True):
         self.input_channels = input_channels
         self.kernel_size = kernel_size
         self.number_filters = number_filters
         self.params = np.array([random.uniform(-1, 1) for _ in range(number_filters * (kernel_size * kernel_size * input_channels + 1))]).reshape(number_filters, -1)
+        self.params_shape = self.params.shape
         self.grads = np.empty(self.params.shape)
         self.stride = stride
         self.padding = padding
-        self.params_shape = (number_filters, kernel_size, kernel_size, input_channels)
+        self.filter_shape = (number_filters, kernel_size, kernel_size, input_channels)
+        self.compute_grads_inputs = compute_grads_inputs
         self.trainable = True
 
         # Variables during forward pass to be used for the backward pass
@@ -145,33 +151,36 @@ class Conv2D():
             # Update the weights and bias
             self.grads[i] = np.append(weights_grads, bias_grad)
 
-        # Calculate gradients for inputs by iterating over the filters
+        # Calculate gradients for inputs
         ###############################################################
-        batch_size, output_height, output_width, num_filters = self._get_output_shape(self.padded_input)
-        filters = self.params[:, :-1].reshape(self.params_shape)
-        filter_masks = []
-        
-        input_num_rows = self.padded_input.shape[1]
-        input_num_cols = self.padded_input.shape[2]
+        if self.compute_grads_inputs:
+            batch_size, output_height, output_width, num_filters = self._get_output_shape(self.padded_input)
+            filters = self.params[:, :-1].reshape(self.filter_shape)
+            filter_masks = []
+            
+            input_num_rows = self.padded_input.shape[1]
+            input_num_cols = self.padded_input.shape[2]
 
-        for i in range(output_height):
-            for j in range(output_width):
-                curr_filter_mask = np.pad(filters, ((0,0),(i * self.stride, input_num_rows - (i*self.stride + self.kernel_size)),(j * self.stride, input_num_cols - (j*self.stride + self.kernel_size)),(0,0)), 'constant', constant_values=0)
-                filter_masks.append(curr_filter_mask)
+            for i in range(output_height):
+                for j in range(output_width):
+                    curr_filter_mask = np.pad(filters, ((0,0),(i * self.stride, input_num_rows - (i*self.stride + self.kernel_size)),(j * self.stride, input_num_cols - (j*self.stride + self.kernel_size)),(0,0)), 'constant', constant_values=0)
+                    filter_masks.append(curr_filter_mask)
 
-        # (output_width * output_height, num_filters, input_rows, input_cols, input_channels)
-        filter_masks = np.array(filter_masks)
-        # (1, output_width * output_height, num_filters, input_rows, input_cols, input_channels)
-        filter_masks = np.expand_dims(filter_masks, axis=0)
-        # (batch_size, output_width * output_height, num_filters, input_rows, input_cols, input_channels)
-        filter_masks = np.repeat(filter_masks, batch_size, axis=0)
-        # (batch_size, output_width * output_height, num_filters)
-        prev_grad_shaped = prev_grad.reshape(prev_grad.shape[0], prev_grad.shape[1]*prev_grad.shape[2], prev_grad.shape[3])
-        # (batch_size, output_width * output_height, num_filters, input_rows, input_cols, input_channels)
-        # ** Need to trim if there is padding **
-        backward_grads = np.einsum('ijk,ijklmn->ijklmn', prev_grad_shaped, filter_masks)
-        # Sum for gradients
-        return np.sum(backward_grads, axis=(1,2))
+            # (output_width * output_height, num_filters, input_rows, input_cols, input_channels)
+            filter_masks = np.array(filter_masks)
+            # (1, output_width * output_height, num_filters, input_rows, input_cols, input_channels)
+            filter_masks = np.expand_dims(filter_masks, axis=0)
+            # (batch_size, output_width * output_height, num_filters, input_rows, input_cols, input_channels)
+            filter_masks = np.repeat(filter_masks, batch_size, axis=0)
+            # (batch_size, output_width * output_height, num_filters)
+            prev_grad_shaped = prev_grad.reshape(prev_grad.shape[0], prev_grad.shape[1]*prev_grad.shape[2], prev_grad.shape[3])
+            # (batch_size, output_width * output_height, num_filters, input_rows, input_cols, input_channels)
+            # ** Need to trim if there is padding **
+            backward_grads = np.einsum('ijk,ijklmn->ijklmn', prev_grad_shaped, filter_masks)
+            # Sum for gradients
+            return np.sum(backward_grads, axis=(1,2))
+        else:
+            return None
 
     def _get_output_shape(self, inputs):
         batch_size = inputs.shape[0]
@@ -210,6 +219,12 @@ class Conv2D():
         sub_matrices = np.reshape(sub_matrices, (batch_size, output_height * output_width, kernel_size, kernel_size, input_channels))
 
         return sub_matrices
+    
+    def parameters(self):
+        return self.params.flatten()
+
+    def gradients(self):
+        return self.grads.flatten()
     
 
 class MaxPool2D():
@@ -283,6 +298,17 @@ class MaxPool2D():
 
         return sub_matrices
 
+class Flatten():
+    def __init__(self):
+        self.inputs_shape = None
+        self.trainable = False
+
+    def __call__(self, inputs):
+        self.inputs_shape = inputs.shape
+        return np.reshape(inputs, (inputs.shape[0], -1))
+
+    def backward(self, prev_grad):
+        return np.reshape(prev_grad, self.inputs_shape)
         
 class ReLU():
         

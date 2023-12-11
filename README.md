@@ -30,12 +30,17 @@ The training code can be found [here](./code/flappy_bird/flappy.ipynb).
 To run the agent for this environemnt, simply run  [run_agent.py](./code/flappy_bird/run_agent.py) 
 
 ### Note:
-To run the agent, you must have a python 3 version before 3.9 and the versions of the follow in your environment:
+To run the agent, you must have a python 3 version before 3.9 and install the following in your environment:
 
 ```
+flappy-bird-gym
 setuptools==65.5.0
 wheel==0.38.4
 ```
 
-These requirements are necessary to install the following flappy bird [environment](https://github.com/Talendar/flappy-bird-gym). Tried making it compatible with the more modern flappy bird gymnasium [environment](https://github.com/markub3327/flappy-bird-gymnasium/tree/main), but this seems to have issues with its state information.
+These requirements are necessary to install the following flappy bird [environment](https://github.com/Talendar/flappy-bird-gym). Tried making it compatible with the more modern flappy bird gymnasium [environment](https://github.com/markub3327/flappy-bird-gymnasium/tree/main), but this seems to have issues with its state information. Because of this, running the evironment to test the agent works on everything except ARM macs.
+
+### Flappy Bird (RGB)
+
+Agent is attempted to be trained to play Flappy Bird using just RGB images. The training code for this can be found [here](./code/flappy_bird/flappy_bird_rgb.ipynb). The issues encountered is training is very slow and the loss is exploding. Input is appropriately preprocessed and normalized between 0 and 1 and L2 regularization is applied. Additional tuning needs to be done, including possibly gradient clipping. Also, trying to run this on a GPU by using cupy as a drop in replacement for numpy may have some speed ups. Overall, the convolutional layers work as well as the training loop. Tests for the layers can be found in the `tests` folder and the training loop worked on training the non RGB agent.
 

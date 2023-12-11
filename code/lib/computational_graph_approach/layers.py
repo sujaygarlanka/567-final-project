@@ -64,13 +64,3 @@ class FC:
         for neuron in self.layer:
             params = np.concatenate((params, neuron.parameters()))
         return params
-
-
-# class Conv2D():
-
-#     def __init__(self, in_channels, out_channels, kernel_size, stride, padding, activation_function=None):
-#         self.in_channels = in_channels
-#         self.out_channels = out_channels
-#         self.kernel_size = kernel_size
-#         self.stride = stride
-#         self.padding = padding
