@@ -3,13 +3,18 @@
 
 My goal was to implement an efficient neural network library from scratch and use it to create a Deep Q Network (DQN) RL agent to play Flappy Bird.
 
+- [Neural Network Library](#neural-network-library)
+    - [Computational Graph](#computational-graph)
+    - [Layered Approach](#layered-approach)
+- [RL Agent](#rl-agent)
+  
 <img style="max-width: 300px" width="100%" src="https://raw.githubusercontent.com/sujaygarlanka/567-final-project/main/flappy_bird_demo.gif"/>
 
 ## Neural Network Library
 
 The are many approaches to developing a neural network library, I investigated two approaches, the computational graph approach and the layered approach. Both have their strengths and weaknesses. I implemented both and benchmarked them by training a DQN to successfully solve the Cart Pole problem.
 
-### Computational Graph
+### [Computational Graph](https://github.com/sujaygarlanka/567-final-project/tree/main/code/lib/computational_graph_approach)
 
 The computational graph approach, as the name suggests, is building a graph that represents all the computations taking place in a neural network, then implementing backpropagation over the graph to compute the gradients for all values involved in the computations.
 
@@ -170,7 +175,7 @@ The layered approach is the second approach I undertook. I did this with the exp
 My layered approach consists of a separate class for each type of layer. This varies from the computational graph approach in that each layer consists of a forward pass function to compute the output of the layer and a backward pass to compute the gradients. The computational graph had all functionality (i.e. forward pass and backward pass) at the individual value level rather than at the layer level. Doing this pass at the layer level allows us to compute all outputs, weight gradients and input gradients for each layer via matrix operations. This approach additionally allows for efficiency gains across another dimension, the batch size. The computational graph required passing in each input independently through the network. However, the layered approach allows for the all calculations to be done in parallel across all inputs that make up a batch.
 
 The basic architecture of each layer is a forward pass method that takes in a batch of inputs and produces a batch of outputs, with each entry in the output batch corresponding to its entry in the inputs. The backward pass does two important calculations. The first is computing the gradients with respect to all the parameters (weights and biases) in the layer. The second is computing the gradients with respect to all the inputs. The input gradients are then returned by the backward pass and passed to the previous layer, so the previous layer has the gradients with respect to its outputs (outputs of previous layer are inputs of current layer). With this architecture, the backward pass is simply iterating over each layer, calling the backward method, getting the output and passing it to the next layer.
-The full implementation can be found here.
+The full implementation can be found [here.
 
 The type of layers I implemented in this approach are fully connected, convolution layer, mean squared error and flatten. The implementation details for most of these layers are standard except for convolution and max pooling. These two layers have windowing, which is traditionally a serially implemented with for loops. However, the main benefit of this approach is parallelization via matrix operations, so I aimed to find a matrix approach. Luckily, both numpy and cudapy have an as strided function that allows for parallelized windowing by accessing the underlying bytes.
 
@@ -186,7 +191,7 @@ I used both implementations to train a DQN to solve the Cart Pole problem. The r
 | Layered (cupy/GPU)        | 0.31              | 0.57               | 28.35                            |
 
 ## RL Agent
-I built an RL agent to play Flappy Bird. Flappy Bird is a game that requires the player to have a bird looking sprite navigate through gaps in pipes. The sprite has a constant x velocity as it moves towards the pipes. The player has the ability to apply a force in the y direction. The goal is for the player to time the application of the force to navigate through the gaps between the pipes for as long as possible.
+I built an RL agent to play Flappy Bird. Flappy Bird is a game that requires the player to have a bird looking sprite navigate through gaps in pipes. The sprite has a constant x velocity as it moves towards the pipes. The player has the ability to apply a force in the y direction. The goal is for the player to time the application of the force to navigate through the gaps between the pipes for as long as possible. The code for running the agent can be found [here](https://github.com/sujaygarlanka/567-final-project/blob/main/code/flappy_bird/run_agent.py).
 
 ### Environment
 
@@ -243,7 +248,7 @@ Used the following neural network architecture below with a mean squared loss fu
 
 ### Results
 
-After training for 576,000 episodes (2 hours on a personal PC), the network converged at a solu- tion for an agent that averaged over 2000 time steps when playing Flappy Bird. This results in an average score of navigating through 30 pipes. While this is not super human performance, it shows that the agent can play the game. With more training time, the agent would be able to play at super human levels. The graph below plots the average episode length of running the agent for 10 episodes after every 1000 episodes of training.
+After training for 576,000 episodes (2 hours on a personal PC), the network converged at a solu- tion for an agent that averaged over 2000 time steps when playing Flappy Bird. This results in an average score of navigating through 30 pipes. While this is not super human performance, it shows that the agent can play the game. With more training time, the agent would be able to play at super human levels. The graph below plots the average episode length of running the agent for 10 episodes after every 1000 episodes of training. The code for training the agent can be found [here](https://github.com/sujaygarlanka/567-final-project/blob/main/code/flappy_bird/flappy_bird_gym.ipynb).
 
 <img style="max-width:500px" width="100%" src="https://raw.githubusercontent.com/sujaygarlanka/567-final-project/main/media/results.png"/>
 
