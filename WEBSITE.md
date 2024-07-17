@@ -33,7 +33,8 @@ For the computational graph an essential component is representing a computation
 | grad     | The gradient for this value                                                                      |
 
 &nbsp;
-<img style="max-width: 500px" width="100%" src="https://raw.githubusercontent.com/sujaygarlanka/567-final-project/main/media/computational_graph.png"/>
+&nbsp;
+<img style="max-width: 700px" width="100%" src="https://raw.githubusercontent.com/sujaygarlanka/567-final-project/main/media/computational_graph.png"/>
 
 To create the computational graph to represent a series of computations, I overwrote the basic operators in the Value class. The overwritten operators are add, subtract, multiply, divide, negation and exponentiation. I overwrote these operators, so when a Value is operated on with the operators listed above with another Value, the output is a new Value that points to these two parent Values. Repeatedly doing this will create a graph of Values where each Value is the child of the two parent Values that were involved in a computation.
 
