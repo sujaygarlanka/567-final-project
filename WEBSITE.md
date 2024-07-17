@@ -3,10 +3,10 @@
 
 My goal was to implement an efficient neural network library from scratch and use it to create a Deep Q Network (DQN) RL agent to play Flappy Bird.
 
-- [Neural Network Library](#neural-network-library)
+[Neural Network Library](#neural-network-library)
     - [Computational Graph](#computational-graph)
     - [Layered Approach](#layered-approach)
-- [RL Agent](#rl-agent)
+[RL Agent](#rl-agent)
   
 <img style="max-width: 300px" width="100%" src="https://raw.githubusercontent.com/sujaygarlanka/567-final-project/main/flappy_bird_demo.gif"/>
 
@@ -164,11 +164,11 @@ class Value():
 
 The last feature to implement is backpropagation. It is the method to compute the gradients for each Value in the computational graph. Backpropagation is implemented by iterating from the final output Value to the inputs. While iterating, each Value computes the gradients for its parents. The child Value has the information of the parent Values, the operation applied between the Values, and its own gradient. It uses this information to find the gradient of each parent with respect to the operation and the Value of the other parent and multiplies it with its own gradient. This produces the gradient for each parent with respect to the one computation that produced this child Value. However, a problem remains because the parents may be involved in multiple computations. To solve this issue, the calculated gradient for each parent is simply added to its current gradient. This ensures that for every computation a Value is involved in, its gradient is not overwritten, but accumulated to find the total change (gradient) a Value can affect on the neural network output.
 
-When implementing backpropagation as described above in the computational graph, the graph must be traversed in a specific order. Since the gradient of each Value depends on the gradient of its child Values, the gradient of the child Values must be completely calculated before moving to the parent. This is only possible in directed acyclic graphs, which neural networks are. To traverse the graph with the restriction imposed above, a topological sort of the directed acyclic computational graph must be found. In ,y implementation, this is done via a recursive method. I traverse over the nodes and compute the gradient in the order returned by sort. How a topological sort works is shown in the diagram below.
+When implementing backpropagation as described above in the computational graph, the graph must be traversed in a specific order. Since the gradient of each Value depends on the gradient of its child Values, the gradient of the child Values must be completely calculated before moving to the parent. This is only possible in directed acyclic graphs, which neural networks are. To traverse the graph with the restriction imposed above, a topological sort of the directed acyclic computational graph must be found. In my implementation, this is done via a recursive method. I traverse over the nodes and compute the gradient in the order returned by sort. How a topological sort works is shown in the diagram below.
 
 <img style="max-width: 500px" width="100%" src="https://raw.githubusercontent.com/sujaygarlanka/567-final-project/main/media/topological_sort.png"/>
 
-### Layered Approach
+### [Layered Approach](https://github.com/sujaygarlanka/567-final-project/tree/main/code/lib/matrix_approach)
 
 The layered approach is the second approach I undertook. I did this with the expectation that this design would allow me to write the library with matrix operations to allow for parallelization and the utilization of efficient computational libraries such as numpy and cudapy. Numpy scientific computing library that runs the matrix operations efficiently on the CPU. CudaPy is an implementation of numpy that runs on the GPU.
 
@@ -236,7 +236,7 @@ Used the following neural network architecture below with a mean squared loss fu
 4. ReLU
 5. Fully Connected (in: 128, out: 2)
 
-<img style="max-width:400px" width="100%" src="https://raw.githubusercontent.com/sujaygarlanka/567-final-project/main/media/decay_rate_function.png"/>
+<img style="max-width:200px" width="100%" src="https://raw.githubusercontent.com/sujaygarlanka/567-final-project/main/media/decay_rate_function.png"/>
 
 *Epsilon Decay Rate Function*
 
