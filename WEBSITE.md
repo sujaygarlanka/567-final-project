@@ -1,5 +1,5 @@
 
-# Implement Neural Network Library and Train RL Agent
+# Implement Neural Network Library and Train RL Agent From Scratch
 
 My goal was to implement an efficient neural network library from scratch and use it to create a Deep Q Network (DQN) RL agent to play Flappy Bird.
 
@@ -13,7 +13,7 @@ The are many approaches to developing a neural network library, I investigated t
 
 The computational graph approach, as the name suggests, is building a graph that represents all the computations taking place in a neural network, then implementing backpropagation over the graph to compute the gradients for all values involved in the computations.
 
-My implementation is a reimplementation of Andrej Karpathy's micrograd with some syntatic modifications. For a very thorough explanation you can refer to his video. Below, I summarize the implementation details.
+My implementation is a reimplementation of Andrej Karpathy's [micrograd](https://github.com/karpathy/micrograd) with some syntatic modifications. For a very thorough explanation you can refer to his [video](https://www.youtube.com/watch?v=VMj-3S1tku0&t=2s). Below, I summarize the implementation details.
 
 #### Graph
 
@@ -25,6 +25,9 @@ For the computational graph an essential component is representing a computation
 | op       | A string describing the operation executed to produce the value                                  |
 | parents  | The references to the two values that the operation was applied between to produce the float value|
 | grad     | The gradient for this value                                                                      |
+
+\
+<img style="max-width: 500px" width="100%" src="https://raw.githubusercontent.com/sujaygarlanka/567-final-project/main/media/computational_graph.png"/>
 
 To create the computational graph to represent a series of computations, I overwrote the basic operators in the Value class. The overwritten operators are add, subtract, multiply, divide, negation and exponentiation. I overwrote these operators, so when a Value is operated on with the operators listed above with another Value, the output is a new Value that points to these two parent Values. Repeatedly doing this will create a graph of Values where each Value is the child of the two parent Values that were involved in a computation.
 
@@ -158,6 +161,8 @@ The last feature to implement is backpropagation. It is the method to compute th
 
 When implementing backpropagation as described above in the computational graph, the graph must be traversed in a specific order. Since the gradient of each Value depends on the gradient of its child Values, the gradient of the child Values must be completely calculated before moving to the parent. This is only possible in directed acyclic graphs, which neural networks are. To traverse the graph with the restriction imposed above, a topological sort of the directed acyclic computational graph must be found. In ,y implementation, this is done via a recursive method. I traverse over the nodes and compute the gradient in the order returned by sort. How a topological sort works is shown in the diagram below.
 
+<img style="max-width: 500px" width="100%" src="https://raw.githubusercontent.com/sujaygarlanka/567-final-project/main/media/topological_sort.png"/>
+
 ### Layered Approach
 
 The layered approach is the second approach I undertook. I did this with the expectation that this design would allow me to write the library with matrix operations to allow for parallelization and the utilization of efficient computational libraries such as numpy and cudapy. Numpy scientific computing library that runs the matrix operations efficiently on the CPU. CudaPy is an implementation of numpy that runs on the GPU.
@@ -200,12 +205,24 @@ For Flappy Bird, I used an environment following the gym API to train and evalua
 **Termination Condition**
 - Crashing into a pipe or ground or going above the top of the screen
 
- One thing worth pointing out is that the Markov assumption does not fully hold for the state because the velocity of the bird is not included. I only have positional information. However, this proves to be sufficient, but may reduce the efficieny of the training.
+ One thing worth pointing out is that the Markov assumption does not fully hold for the state because the velocity of the bird is not included. I only have positional information. However, this proves to be sufficient, but may reduce the efficiency of the training.
 
 ### DQN Agent
 
 #### DQN Algorithm
-The DQN agent uses a Deep Q Network (DQN) to learn a policy. To understand a deep Q network, I will explains its foundation, which is Q-learning. Q-learning works with the assumption that states/observations follow the Markov property. This means that the state encapsulates all information about the environment that allows for the agent to find an optimal action. It is centered around the Q function. The Q function takes in the state and action and produces a value. The higher the values, the better the state action pair. In Q-learning, the goal is to learn this Q function. From this Q function, an agent can find the optimal action when given a state by finding the action that returns the highest Q value when paired with the state. The Q function is ultimately learned via repeated Bellman updates to the Q function. As the equation below shows, the Q value for the current state-action pair, is the max Q value for the next state multiplied by discount factor (γ), added to the reward that was returned for getting to the next state. Repeatedly running this update with collected returns an optimal Q function. For a DQN, this Q function is represented by a neural network and is updated via a gradient step. This gradient step is taken at the end of each episode on a batch of experiences saved from previous episodes. This buffer of saved experiences is called replay memory. The full algorithm for a DQN is described in figure 1.
+The DQN agent uses a Deep Q Network (DQN) to learn a policy. To understand a deep Q network, I will explains its foundation, which is Q-learning. Q-learning works with the assumption that states/observations follow the Markov property. This means that the state encapsulates all information about the environment that allows for the agent to find an optimal action. It is centered around the Q function. The Q function takes in the state and action and produces a value. The higher the values, the better the state action pair. In Q-learning, the goal is to learn this Q function. From this Q function, an agent can find the optimal action when given a state by finding the action that returns the highest Q value when paired with the state. The Q function is ultimately learned via repeated Bellman updates to the Q function. As the equation below shows, the Q value for the current state-action pair, is the max Q value for the next state multiplied by discount factor (γ), added to the reward that was returned for getting to the next state. Repeatedly running this update with collected returns an optimal Q function. For a DQN, this Q function is represented by a neural network and is updated via a gradient step. This gradient step is taken at the end of each episode on a batch of experiences saved from previous episodes. This buffer of saved experiences is called replay memory. The full algorithm for a DQN is shown below.
+
+<img style="max-width: 200px" width="100%" src="https://raw.githubusercontent.com/sujaygarlanka/567-final-project/main/media/q_function.png"/>
+
+```math
+Q_{i+1}(s, a) = \mathbb{E}_{s' \sim e} \left[ r + \gamma \max_{a'} Q_i(s', a') \mid s, a \right]
+```
+
+*Bellman Optimality Equation*
+
+<img style="max-width:400px" width="100%" src="https://raw.githubusercontent.com/sujaygarlanka/567-final-project/main/media/DQN_algorithm.png"/>
+
+*DQN Algorithm*
 
 #### Neural Network and Training Parameters
 
@@ -218,6 +235,8 @@ Used the following neural network architecture below with a mean squared loss fu
 4. ReLU
 5. Fully Connected (in: 128, out: 2)
 
+<img style="max-width:300px" width="100%" src="https://raw.githubusercontent.com/sujaygarlanka/567-final-project/main/media/decay_rate_function.png"/>
+
 **Training Parameters**
 - Discount factor (γ): 0.95
 - Batch size: 32
@@ -226,4 +245,7 @@ Used the following neural network architecture below with a mean squared loss fu
 
 ### Results
 
-After training for 576,000 episodes (2 hours on a personal PC), the network converged at a solu- tion for an agent that averaged over 2000 time steps when playing Flappy Bird. This results in an average score of navigating through 30 pipes. While this is not super human performance, it shows that the agent can play the game. With more training time, the agent would be able to play at super human levels. The graph below (figure 4) plots the average episode length of running the agent for 10 episodes after every 1000 episodes of training.
+After training for 576,000 episodes (2 hours on a personal PC), the network converged at a solu- tion for an agent that averaged over 2000 time steps when playing Flappy Bird. This results in an average score of navigating through 30 pipes. While this is not super human performance, it shows that the agent can play the game. With more training time, the agent would be able to play at super human levels. The graph below plots the average episode length of running the agent for 10 episodes after every 1000 episodes of training.
+
+<img style="max-width:300px" width="100%" src="https://raw.githubusercontent.com/sujaygarlanka/567-final-project/main/media/results.png"/>
+
