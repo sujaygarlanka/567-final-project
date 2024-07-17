@@ -250,7 +250,7 @@ Used the following neural network architecture below with a mean squared loss fu
 
 ### Results
 
-After training for 576,000 episodes (2 hours on a personal PC), the network converged at a solu- tion for an agent that averaged over 2000 time steps when playing Flappy Bird. This results in an average score of navigating through 30 pipes. While this is not super human performance, it shows that the agent can play the game. With more training time, the agent would be able to play at super human levels. The graph below plots the average episode length of running the agent for 10 episodes after every 1000 episodes of training. The code for training the agent can be found [here](https://github.com/sujaygarlanka/567-final-project/blob/main/code/flappy_bird/flappy_bird_gym.ipynb).
+After training for 576,000 episodes (2 hours on a personal PC), the network converged at a solution for an agent that averaged over 2000 time steps when playing Flappy Bird. This results in an average score of navigating through 30 pipes. While this is not super human performance, it shows that the agent can play the game. With more training time, the agent would be able to play at super human levels. The graph below plots the average episode length of running the agent for 10 episodes after every 1000 episodes of training. The code for training the agent can be found [here](https://github.com/sujaygarlanka/567-final-project/blob/main/code/flappy_bird/flappy_bird_gym.ipynb).
 
 <img style="max-width:500px" width="100%" src="https://raw.githubusercontent.com/sujaygarlanka/567-final-project/main/media/results.png"/>
 
