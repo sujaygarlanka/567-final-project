@@ -237,7 +237,7 @@ Used the following neural network architecture below with a mean squared loss fu
 4. ReLU
 5. Fully Connected (in: 128, out: 2)
 
-<img style="max-width:200px" width="100%" src="https://raw.githubusercontent.com/sujaygarlanka/567-final-project/main/media/decay_rate_function.png"/>
+<img style="max-width:300px" width="100%" src="https://raw.githubusercontent.com/sujaygarlanka/567-final-project/main/media/decay_rate_function.png"/>
 
 *Epsilon Decay Rate Function*
 
