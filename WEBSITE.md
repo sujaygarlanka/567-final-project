@@ -4,8 +4,9 @@
 My goal was to implement an efficient neural network library from scratch and use it to create a Deep Q Network (DQN) RL agent to play Flappy Bird.
 
 [Neural Network Library](#neural-network-library)
-    - [Computational Graph](#computational-graph)
-    - [Layered Approach](#layered-approach)
+- [Computational Graph](#computational-graph)
+- [Layered Approach](#layered-approach)
+
 [RL Agent](#rl-agent)
   
 <img style="max-width: 300px" width="100%" src="https://raw.githubusercontent.com/sujaygarlanka/567-final-project/main/flappy_bird_demo.gif"/>
